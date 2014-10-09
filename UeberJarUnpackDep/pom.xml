@@ -6,6 +6,12 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>UeberJarUnpackDep</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <app.main.class>org.jacpfx.demo.maven.SimplestServer</app.main.class>
+        <maven.compile.java.version>1.8</maven.compile.java.version>
+        <jetty.version>9.2.3.v20140905</jetty.version>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -13,8 +19,8 @@
                 <version>3.1</version>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${maven.compile.java.version}</source>
+                    <target>${maven.compile.java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -53,9 +59,34 @@
                             <arguments>
                                 <argument>-createjar</argument>
                                 <argument>-appclass</argument>
-                                <argument>org.jacpfx.demo.maven.SimplestServer</argument>
+                                <argument>${app.main.class}</argument>
                                 <argument>-srcdir</argument>
                                 <argument>${project.build.directory}/classes</argument>
+                                <argument>-outdir</argument>
+                                <argument>./target</argument>
+                                <argument>-outfile</argument>
+                                <argument>${project.artifactId}-app</argument>
+                                <argument>-v</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>package-jar2</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${env.JAVA_HOME}/bin/javapackager</executable>
+                            <!-- http://docs.oracle.com/javase/8/docs/technotes/tools/unix/javapackager.html -->
+                            <arguments>
+                                <argument>-deploy</argument>
+                                <argument>-native</argument>
+                                <argument>installer</argument>
+                                <argument>-appclass</argument>
+                                <argument>${app.main.class}</argument>
+                                <argument>-srcfiles</argument>
+                                <argument>${project.build.directory}/${artifactId}-app.jar</argument>
                                 <argument>-outdir</argument>
                                 <argument>./target</argument>
                                 <argument>-outfile</argument>
@@ -73,14 +104,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.2.3.v20140905</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <version>${jetty.version}</version>
         </dependency>
     </dependencies>
     <url>https://github.com/JacpFX/JacpFX</url>
